@@ -19,10 +19,12 @@
 (defn slurp-binary
   "Reads len bytes from InputStream is and returns a byte array."
   [^java.io.InputStream is len]
-  (with-open [rdr is]
-    (let [buf (byte-array len)]
-      (.read rdr buf)
-      buf)))
+  (when (and is
+             (> len 0))
+    (with-open [rdr is]
+      (let [buf (byte-array len)]
+        (.read rdr buf)
+        buf))))
 
 (defn wrap-proxy
   "Proxies requests from proxied-path, a local URI, to the remote URI at
@@ -46,6 +48,7 @@
                      :throw-exceptions false
                      :as :stream} http-opts)
              request
+             (update-in [:headers] dissoc "Transfer-Encoding")
              prepare-cookies))
        (handler req)))))
 
