@@ -49,8 +49,24 @@
              prepare-cookies))
        (handler req)))))
 
+<<<<<<< HEAD
 (defn run-proxy
   [listen-path listen-port remote-uri http-opts]
   (-> (constantly {:status 404 :headers {} :body "404 - not found"})
       (wrap-proxy listen-path remote-uri http-opts)
       (run-jetty {:port listen-port}) ))
+=======
+(defn local-proxy-server
+  [listen-port remote-uri-base http-opts]
+  (->
+    (constantly {:status 404 :headers {} :body "404 - not found"})
+    (wrap-proxy "" remote-uri-base http-opts)
+    (run-jetty {:port listen-port})))
+
+(defn -main
+  [listen-port remote-uri-base & opts]
+  (local-proxy-server
+    (read-string listen-port)
+    remote-uri-base
+    (if-not (seq opts) {} (read-string (join " " opts)))))
+>>>>>>> parent of 92d6d50... remove :main to avoid AOT issues
